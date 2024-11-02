@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/Perfil")
 public class PerfilController {
 
-    [!Note]
+    >[!Note]
     Por el momento solo programo las operaciones CRUD
     
     @Autowired
