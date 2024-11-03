@@ -19,9 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/Perfil")
 public class PerfilController {
 
-    >[!Note]
-    Por el momento solo programo las operaciones CRUD
-    
     @Autowired
     private PerfilRepository perfilRepository;
 
