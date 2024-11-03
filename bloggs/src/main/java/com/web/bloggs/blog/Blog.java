@@ -1,5 +1,5 @@
 package com.web.bloggs.blog;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import com.web.bloggs.perfil.Perfil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +9,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.Date;
+import org.hibernate.annotations.Type;
+import com.vladmihalcea.hibernate.type.json.JsonNodeStringType; 
+import com.web.bloggs.converters.JsonNodeConverter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 
 @Entity
 @Table(name = "blog")
@@ -20,7 +25,8 @@ public class Blog {
     private String blo_titulo;
     private String blo_categoria;
     private Date blo_fecha;
-    private String blo_contenido;
+    @Convert(converter = JsonNodeConverter.class)
+    private JsonNode blo_contenido;
 
     @OneToOne
     @JoinColumn(name = "ID_Perfil")
@@ -58,11 +64,11 @@ public class Blog {
         this.blo_fecha = blo_fecha;
     }
 
-    public String getBlo_contenido() {
-        return blo_contenido;
+    public JsonNode getBlo_contenido() {
+        return this.blo_contenido;
     }
 
-    public void setBlo_contenido(String blo_contenido) {
+    public void setBlo_contenido(JsonNode blo_contenido) {
         this.blo_contenido = blo_contenido;
     }
 

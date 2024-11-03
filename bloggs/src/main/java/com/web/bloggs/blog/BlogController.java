@@ -1,5 +1,7 @@
 package com.web.bloggs.blog;
 
+import com.web.bloggs.perfil.Perfil;
+import com.web.bloggs.perfil.PerfilRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class BlogController {
     @Autowired
     private BlogRepository blogRepository;
 
+    @Autowired
+    private PerfilRepository perfilRepository;
+
     @CrossOrigin
     @GetMapping
     public List<Blog> getAllBlogs() {
@@ -36,10 +41,17 @@ public class BlogController {
     }
 
     @CrossOrigin
-    @PostMapping
-    public ResponseEntity<Blog> createBlog(@RequestBody Blog blog) {
-        Blog nuevoBlog = blogRepository.save(blog);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoBlog);
+    @PostMapping("/{ID}")
+    public ResponseEntity<Blog> createBlog(@PathVariable Long ID, @RequestBody Blog blog) {
+        System.out.println(blog.getBlo_contenido());
+        Optional<Perfil>selectedPerfil=perfilRepository.findById(ID); 
+        if (selectedPerfil.isPresent()) {
+            blog.setID_Perfil(selectedPerfil.get());
+            Blog nuevoBlog = blogRepository.save(blog);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoBlog);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @CrossOrigin
@@ -56,13 +68,12 @@ public class BlogController {
     @CrossOrigin
     @PutMapping("/{ID}")
     public ResponseEntity<Blog> updateElementByID(@PathVariable Long ID, @RequestBody Blog blog) {
-        if(!blogRepository.existsById(ID)){
-            return ResponseEntity.notFound().build(); 
-        }
-        else{
+        if (!blogRepository.existsById(ID)) {
+            return ResponseEntity.notFound().build();
+        } else {
             blog.setID_Blog(ID);
-            Blog updatedBlog=blogRepository.save(blog); 
-            return ResponseEntity.ok(updatedBlog); 
+            Blog updatedBlog = blogRepository.save(blog);
+            return ResponseEntity.ok(updatedBlog);
         }
     }
 
