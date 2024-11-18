@@ -41,10 +41,32 @@ public class BlogController {
     }
 
     @CrossOrigin
+    @GetMapping("/{title}/{profile}")
+    public ResponseEntity<Blog> getBlogByTitleAndProfile(@PathVariable String title, @PathVariable String profile) {
+        Optional<Blog> selectedBlog = blogRepository.findByNameAndTitle(profile, title);
+        if (selectedBlog.isPresent()) {
+            Blog blog = selectedBlog.get();
+            return ResponseEntity.ok(blog);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @CrossOrigin
+    @GetMapping("/filter/{category}")
+    public ResponseEntity<List<Blog>> getBlogByCategory(@PathVariable String category) {
+        Optional<List<Blog>> catBlogs = blogRepository.findByCategory(category);
+        if (catBlogs.isPresent()) {
+            List<Blog> setBlogs = catBlogs.get();
+            return ResponseEntity.ok(setBlogs);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @CrossOrigin
     @PostMapping("/{ID}")
     public ResponseEntity<Blog> createBlog(@PathVariable Long ID, @RequestBody Blog blog) {
         System.out.println(blog.getBlo_contenido());
-        Optional<Perfil>selectedPerfil=perfilRepository.findById(ID); 
+        Optional<Perfil> selectedPerfil = perfilRepository.findById(ID);
         if (selectedPerfil.isPresent()) {
             blog.setID_Perfil(selectedPerfil.get());
             Blog nuevoBlog = blogRepository.save(blog);

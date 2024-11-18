@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.http.HttpStatusCode;
 
 @RestController
 @RequestMapping("/Perfil")
@@ -37,10 +39,23 @@ public class PerfilController {
         return perfil.map((ResponseEntity::ok)).orElseGet(() -> (ResponseEntity.notFound().build()));
     }
 
+    @CrossOrigin
+    @GetMapping("/filter/{ID}")
+    public ResponseEntity<String> getUsernameByID(@PathVariable Long ID){
+        Optional<String> username = perfilRepository.getProfileNameByID(ID); 
+        if(username.isPresent()){
+            String newUsername = username.get(); 
+            return ResponseEntity.ok(newUsername); 
+        }
+        return ResponseEntity.notFound().build(); 
+    }
+    
     /// Crear un perfil según el body obtenido.
     @CrossOrigin
     @PostMapping
     public ResponseEntity<Perfil> createPerfil(@RequestBody Perfil perfil) {
+        String currentPassword = perfil.getPer_contraseña();
+        perfil.setPer_contraseña(BCrypt.hashpw(currentPassword, BCrypt.gensalt()));
         Perfil savedPerfil = perfilRepository.save(perfil);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPerfil);
     }
@@ -68,4 +83,42 @@ public class PerfilController {
         }
     }
 
+    /// Verificar una sesión.
+    @CrossOrigin
+    @PostMapping("/login")
+    public ResponseEntity<Perfil> Login(@RequestBody ParamsLogin parametros) {
+        Perfil sesionActual = perfilRepository.findByPerNombre(parametros.username);
+        System.out.println(parametros.username);
+        if (sesionActual == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        if (BCrypt.checkpw(parametros.password, sesionActual.getPer_contraseña())) {
+            return ResponseEntity.ok(sesionActual);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+    }
+
+    public static class ParamsLogin {
+
+        private String username;
+        private String password;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+    }
 }

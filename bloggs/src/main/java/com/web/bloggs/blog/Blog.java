@@ -29,7 +29,7 @@ public class Blog {
     private JsonNode blo_contenido;
 
     @OneToOne
-    @JoinColumn(name = "ID_Perfil")
+    @JoinColumn(name = "ID_Perfil", nullable = false)
     private Perfil ID_Perfil;
 
     public Long getID_Blog() {

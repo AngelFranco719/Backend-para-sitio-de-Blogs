@@ -12,10 +12,12 @@ public class Perfil {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ID_Perfil; 
     private String per_nombre;
+    private String per_contraseña; 
     private String per_descripcion; 
     private String per_foto;
     private String per_portada;
     private Date per_fecha;
+   
 
     public Long getID_Perfil() {
         return ID_Perfil;
@@ -31,6 +33,14 @@ public class Perfil {
 
     public void setPer_nombre(String per_nombre) {
         this.per_nombre = per_nombre;
+    }
+
+    public String getPer_contraseña() {
+        return per_contraseña;
+    }
+
+    public void setPer_contraseña(String per_contraseña) {
+        this.per_contraseña = per_contraseña;
     }
 
     public String getPer_descripcion() {
